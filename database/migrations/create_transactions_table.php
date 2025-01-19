@@ -1,27 +1,40 @@
 <?php
 
-namespace database\migrations;
+use Illuminate\Database\Migrations\Migration;
+use Illuminate\Database\Schema\Blueprint;
+use Illuminate\Support\Facades\Schema;
 
-class CreateTransactionsTable
+class CreateTransactionsTable extends Migration
 {
-    public static function up()
+    /**
+     * Run the migrations.
+     *
+     * @return void
+     */
+    public function up()
     {
-        $query = "
-            CREATE TABLE transactions (
-                id INT AUTO_INCREMENT PRIMARY KEY,
-                order_id VARCHAR(50) NOT NULL UNIQUE,
-                amount DECIMAL(10, 3) NOT NULL,
-                currency CHAR(3) NOT NULL DEFAULT 'OMR',
-                status VARCHAR(20) NOT NULL DEFAULT 'INITIATED',
-                tracking_id VARCHAR(100),
-                response TEXT,
-                created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-                updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
-            );
-        ";
+        Schema::create('transactions', function (Blueprint $table) {
+            $table->id(); // Primary key
+            $table->unsignedBigInteger('order_id'); // Foreign key to the orders table
+            $table->decimal('amount', 10, 3); // Amount with up to 3 decimal places
+            $table->string('currency', 3)->default('OMR'); // Currency, e.g., OMR, USD
+            $table->string('status', 20)->default('INITIATED'); // Status of the transaction
+            $table->string('tracking_id', 100)->nullable(); // Tracking ID returned by the payment gateway
+            $table->text('response')->nullable(); // Full response from the gateway
+            $table->timestamps(); // Created at and Updated at timestamps
 
-        // اجرای کوئری در پایگاه داده
-        $db = new \PDO('mysql:host=127.0.0.1;dbname=your_db', 'username', 'password');
-        $db->exec($query);
+            // Define foreign key
+            $table->foreign('order_id')->references('id')->on('orders')->onDelete('cascade');
+        });
+    }
+
+    /**
+     * Reverse the migrations.
+     *
+     * @return void
+     */
+    public function down()
+    {
+        Schema::dropIfExists('transactions');
     }
 }
