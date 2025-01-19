@@ -4,11 +4,11 @@ namespace SmartPay;
 
 class Config
 {
-    private $merchantId;
-    private $accessCode;
-    private $workingKey;
-    private $redirectUrl;
-    private $cancelUrl;
+    private mixed $merchantId;
+    private mixed $accessCode;
+    private mixed $workingKey;
+    private mixed $redirectUrl;
+    private mixed $cancelUrl;
 
     public function __construct($settings = [])
     {
