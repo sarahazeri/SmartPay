@@ -32,7 +32,7 @@ class SmartPay
         $encryptedRequest = Encryption::encrypt(http_build_query($requestData), $this->workingKey);
 
         $httpClient = new HttpClient();
-        return $httpClient->post('https://smartpay.example.com/initiate', [
+        return $httpClient->post('https://mti.bankmuscat.com:6443/transaction.do?command=initiateTransaction', [
             'access_code' => $this->accessCode,
             'encRequest' => $encryptedRequest,
         ]);
