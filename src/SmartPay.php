@@ -18,7 +18,7 @@ class SmartPay
         $this->workingKey = $workingKey;
     }
 
-    public function initiatePayment($orderId, $amount, $currency = 'OMR', $redirectUrl, $cancelUrl)
+    public function initiatePayment($orderId, $amount, $currency, $redirectUrl, $cancelUrl)
     {
         $requestData = [
             'merchant_id' => $this->merchantId,
@@ -30,12 +30,11 @@ class SmartPay
         ];
 
         $encryptedRequest = Encryption::encrypt(http_build_query($requestData), $this->workingKey);
+        return [
+            'accessCode' => $this->accessCode,
+            'encryptedData' => $encryptedRequest,
+        ];
 
-        $httpClient = new HttpClient();
-        return $httpClient->post('https://mti.bankmuscat.com:6443/transaction.do?command=initiateTransaction', [
-            'access_code' => $this->accessCode,
-            'encRequest' => $encryptedRequest,
-        ]);
     }
 
     public function processResponse($encResponse)
